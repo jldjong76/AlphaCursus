@@ -12,7 +12,16 @@ html,body{margin:0;background:#111;color:#eee;font-family:Georgia,serif}
 .notescard{width:100%;max-width:640px;background:#1c1c2a;border:1px solid #333;border-radius:12px;padding:16px 18px;box-sizing:border-box}
 .notescard h2{margin:0 0 8px;font-size:15px;color:#9ab;text-transform:uppercase;letter-spacing:.08em;font-family:sans-serif}
 .notescard p{font-size:19px;line-height:1.55;margin:.5em 0}
+#track{display:flex;width:100%;transition:transform .25s ease}
+.card{min-width:100vw;max-width:100vw;min-height:100vh;height:100vh;overflow-y:auto}
+html,body{overflow:hidden}
+#nav{position:fixed;bottom:8px;right:12px;z-index:10;display:flex;gap:8px}
+#nav button{width:44px;height:44px;border-radius:50%;border:1px solid #555;background:#222;color:#eee;font-size:20px;cursor:pointer}
+#dots{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:7px}
+#dots span{width:8px;height:8px;border-radius:50%;background:#444}
+#dots span.on{background:#9ab}
 </style></head><body>
+<div id="track">
 <article class="card">
 <div class="prevwrap"><div class="preview"><img data-img="image1.jpeg" alt="http://static.artuk.org/w1200h1200/CIA/CIA_CIA_P_1947_LF_62.jpg" title="http://static.artuk.org/w1200h1200/CIA/CIA_CIA_P_1947_LF_62.jpg" style="left:0px;top:0px;width:1033px;height:803px;"></div></div>
 <p class="cnr">1 / 13</p>
@@ -80,6 +89,7 @@ html,body{margin:0;background:#111;color:#eee;font-family:Georgia,serif}
 <p class="cnr">13 / 13</p>
 <div class="notescard"><h2>Notities</h2><p>Lewis voorbeeld!</p><p>Wat hebben we gezien?</p><p>Geloven dat de duivel bestaat is bijbels, maar ook herkenbaar: strijden aan het</p><p>front.</p><p>Lewis zegt Je kunt 2 fouten maken: er niet in geloven, en er teveel in geloven (denk aan al die 666 dingen)</p><p>De Duivel zaait twijfel, maakt wat niet mag groot, zegt dat het ongestraft blijft.</p><p>... maar het creert schaamte, verwijdering van God, van elkaar, en ook straf...</p><p>Alleen: Jezus heeft alles verslagen, dus we hebben een transfer gemaakt van de ene voetbalclub naar de andere. Of de éne baan naar de andere: ik hoef geen klusjes meer voor jou op te knappen!</p><p>Pak e.e.a. voortvarend op met de wapenrusting uit Efeze</p><p>... en blijf bidden en goed doen. Bedenk: De ellende van de Hel is nog geen speldenknop bij de vreugde die God ons heeft beloofd!</p></div>
 </article>
+</div>
 <script>
 var IMG = {
   "image9.jpeg": [
@@ -158,4 +168,35 @@ function fitscale(){document.querySelectorAll('.prevwrap').forEach(function(w){
  var p=w.querySelector('.preview');p.style.transform='scale('+(w.clientWidth/1024)+')';});}
 addEventListener('resize',fitscale);
 document.addEventListener('DOMContentLoaded',fitscale);fitscale();
-</script></body></html>
+</script><div id="dots"></div>
+<div id="nav"><button id="prev" aria-label="Vorige dia">&#8592;</button><button id="next" aria-label="Volgende dia">&#8594;</button></div>
+<script>
+(function(){
+var cards=document.querySelectorAll('.card'),track=document.getElementById('track'),
+dots=document.getElementById('dots'),cur=0,N=cards.length;
+for(var i=0;i<N;i++){var d=document.createElement('span');dots.appendChild(d);}
+var ds=dots.querySelectorAll('span');
+function go(i){
+ cur=Math.max(0,Math.min(N-1,i));
+ track.style.transform='translateX(-'+(cur*100)+'%)';
+ cards[cur].scrollTop=0;
+ for(var j=0;j<N;j++){ds[j].className=(j===cur)?'on':'';}
+}
+document.getElementById('prev').onclick=function(){go(cur-1);};
+document.getElementById('next').onclick=function(){go(cur+1);};
+addEventListener('keydown',function(e){
+ if(e.key==='ArrowRight'){go(cur+1);}
+ if(e.key==='ArrowLeft'){go(cur-1);}
+});
+var sx=null,sy=null;
+document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+document.addEventListener('touchend',function(e){
+ if(sx===null)return;
+ var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+ if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)){go(cur+(dx<0?1:-1));}
+ sx=null;sy=null;
+},{passive:true});
+go(0);
+})();
+</script>
+</body></html>
